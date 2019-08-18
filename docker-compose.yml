@@ -1,0 +1,38 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:4.2.0-bionic
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=myapp
+    networks:
+      - custom
+  
+  backend:
+    build: ./backend
+    ports:
+      - 3333:3333
+    environment:
+      - MONGO_CONNECTION_STRING=mongodb://mongo:27017/myapp
+    depends_on:
+      - mongo
+    networks:
+      - custom
+
+  frontend:
+    build: ./frontend
+    ports:
+      - 3000:80
+    depends_on:
+      - backend
+    networks:
+      - custom
+
+networks:
+  custom:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.50.0.0/16
