@@ -7,6 +7,10 @@ module.exports = {
         
         const loggedDev = await Dev.findById(user);
 
+        if (!loggedDev) {
+            return res.status(404).json({ user });
+        }
+
         const users = await Dev.find({
             $and: [
                 { _id: { $ne: user } },
